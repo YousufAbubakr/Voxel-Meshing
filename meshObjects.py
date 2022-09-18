@@ -1,4 +1,7 @@
-# Defines Node and Element classes for voxel mesh generation
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Defines Node, Element, and Mesh classes for voxel mesh generation
 
 class Node:
 
@@ -15,3 +18,10 @@ class Element:
     def __init__(self, nodes):
         # Instance Variables:
         self.nodes = nodes
+
+class Mesh:
+
+    # Initializing instance of a mesh:
+    def __init__(self, elements):
+        # Instance Variables:
+        self.elements = elements
