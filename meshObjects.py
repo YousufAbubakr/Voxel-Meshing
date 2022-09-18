@@ -8,4 +8,10 @@ class Node:
         self.x = x
         self.y = y
         self.z = z
-        
+
+class Element:
+
+    # Initializing instance of an element:
+    def __init__(self, nodes):
+        # Instance Variables:
+        self.nodes = nodes
