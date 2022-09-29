@@ -5,13 +5,16 @@ import numpy as np
 
 class Node:
 
+    lastID = 0
+
     # Initializing instance of a node:
-    def __init__(self, x, y, z, id):
+    def __init__(self, x, y, z):
         # Instance Variables:
         self.x = x
         self.y = y
         self.z = z
-        self.id = id
+        self.id = Node.lastID
+        Node.lastID += 1
 
 class Element:
 
@@ -35,10 +38,14 @@ class Mesh:
         self.lpos = np.linspace(0, self.l, self.Nl)
         self.wpos = np.linspace(0, self.w, self.Nw)
         self.tpos = np.linspace(0, self.t, self.Nt)
+
+        print(f"L values: \n {self.lpos}")
+        print(f"W values: \n {self.wpos}")
+        print(f"T values: \n {self.tpos}")
     
     def createBMesh(self):
-        lcoords, wcoords, tcoords = np.meshgrid(self.lpos, self.wpos, self.tpos, indexing = 'ij')
-        for l in lcoords:
-            for w in wcoords:
-                for t in tcoords:
-                    print("coordinate: ", str([l, w, t]))
+        for l in self.lpos:
+            for w in self.wpos:
+                for t in self.tpos:
+                    node = Node(l, w, t)
+                    print(node.id)

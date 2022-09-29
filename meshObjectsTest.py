@@ -4,12 +4,12 @@ import unittest
 class TestStringMethods(unittest.TestCase):
 
     def testBasicMeshCoordinates(self):
-        length = 10
-        width = 10
-        thickness = 10
-        Nl = 10
-        Nw = 10
-        Nt = 10
+        length = 1
+        width = 1
+        thickness = 1
+        Nl = 2
+        Nw = 2
+        Nt = 2
         testMesh = Mesh(length, width, thickness, Nl, Nw, Nt)
         testMesh.createBMesh()
 
