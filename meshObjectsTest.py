@@ -7,9 +7,9 @@ class TestStringMethods(unittest.TestCase):
         length = 1
         width = 1
         thickness = 1
-        Nl = 2
-        Nw = 2
-        Nt = 2
+        Nl = 3
+        Nw = 3
+        Nt = 3
         testMesh = Mesh(length, width, thickness, Nl, Nw, Nt)
         testMesh.createBMesh()
 
