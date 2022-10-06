@@ -105,7 +105,7 @@ class Mesh:
         l, w, t: length, width, and thickness of mesh
         Nl, Nw, Nt: number of elements along the length, width, and thickness directions
         lpos, wpos, tpos: linspace of discrete x, y, z positions given by l, w, t and Nl, Nw, Nt
-        globalNodes: set of all global node IDs, starting at node ID 0
+        globalNodes: set of all global node objects
     '''
 
     def __init__(self, l, w, t, Nl, Nw, Nt):
@@ -118,6 +118,8 @@ class Mesh:
         along the l, w, and t directions.
         '''
         # Instance Variables:
+        assert l > 0 and w > 0 and t > 0, "Geometries must be positive!"
+        assert Nl > 1 and Nw > 1 and Nt > 1, "Number of elements must be greater than 0!"
         self.l = l
         self.w = w
         self.t = t
@@ -134,15 +136,17 @@ class Mesh:
         self.wpos = np.linspace(0, w, Nw)
         self.tpos = np.linspace(0, t, Nt)
 
-        print(f"L values: \n {self.lpos}")
-        print(f"W values: \n {self.wpos}")
-        print(f"T values: \n {self.tpos}")
+        print(f"X Coordinates: {self.lpos}")
+        print(f"Y Coordinates: {self.wpos}")
+        print(f"Z Coordinates: {self.tpos}")
     
-    def createBMesh(self):
+    def genNodes(self):
+        ''' Generates array of nodes in O(Nl * Nw * Nt) time.
+        '''
         for l in self.lpos:
             for w in self.wpos:
                 for t in self.tpos:
                     node = Node(l, w, t)
-                    self.globalNodes.append(node.id)
+                    self.globalNodes.append(node)
                     print("Node ID: ", node.id)
                     print("Node coords: ", [node.x, node.y, node.z])
