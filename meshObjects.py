@@ -22,6 +22,7 @@ class Node:
 
     Attributes (static variables):
         x, y, z: (x, y, z) coordinate location of node
+        coord: (x, y, z) tuple of node coordinate
         id: global node ID
     '''
 
@@ -40,6 +41,7 @@ class Node:
         self.x = x
         self.y = y
         self.z = z
+        self.coord = (x, y, z)
         self.id = Node.lastID
         Node.lastID += 1
 
@@ -88,11 +90,11 @@ class Mesh:
 
     Example 2D Voxel Mesh Case:
     
-    1_ _ _ _2_ _ _ _5        Elements = [E1, E2, E3, E4]
-    |       |       |        E1 Local Node IDs = [1, 2, 3, 4]
-    |  E1   |  E2   |        E2 Local Node IDs = [2, 5, 4, 6]
-    |3 _ _ 4|_ _ _ _|6       E3 Local Node IDs = [3, 4, 7, 8]
-    |       |       |        E4 Local Node IDs = [4, 6, 8, 9]
+    1_ _ _ _2_ _ _ _3        Elements = [E1, E2, E3, E4]
+    |       |       |        E1 Local Node IDs = [1, 2, 4, 5]
+    |  E1   |  E2   |        E2 Local Node IDs = [2, 3, 5, 6]
+    |4 _ _ 5|_ _ _ _|6       E3 Local Node IDs = [4, 5, 7, 8]
+    |       |       |        E4 Local Node IDs = [5, 6, 8, 9]
     |  E3   |  E4   |        Global Node IDs = [1, 2, 3, 4, 5, 6, 7, 8, 9] 
     |7 _ _ 8|_ _ _ _|9       Mesh = Elements
     
@@ -106,6 +108,7 @@ class Mesh:
         Nl, Nw, Nt: number of elements along the length, width, and thickness directions
         lpos, wpos, tpos: linspace of discrete x, y, z positions given by l, w, t and Nl, Nw, Nt
         globalNodes: set of all global node objects
+        elements: set of all element objects
     '''
 
     def __init__(self, l, w, t, Nl, Nw, Nt):
@@ -127,6 +130,7 @@ class Mesh:
         self.Nw = Nw
         self.Nt = Nt
         self.globalNodes = []
+        self.elements = []
         # Linearly spaced unit coordinates are defined such that there
         # are N(l, w, t) - where N(l, w, t) corresponds to either Nl, 
         # Nw, or Nt - coordinate nodes along the given direction, and 
@@ -140,13 +144,56 @@ class Mesh:
         print(f"Y Coordinates: {self.wpos}")
         print(f"Z Coordinates: {self.tpos}")
     
+    def getNodes(self):
+        ''' Returns the nodes defined within the current context of the mesh.
+        '''
+        if len(self.globalNodes) == 0:
+            print("Nodes have not been generated yet!")
+        return self.globalNodes
+
+    def getElements(self):
+        ''' Returns the elements defined within the current context of the mesh.
+        '''
+        if len(self.elements) == 0:
+            print("Elements have not been generated yet!")
+        return self.elements
+
+    def getNumberofNodes(self):
+        ''' Returns the number of nodes defined within the current context of the mesh.
+        '''
+        if len(self.globalNodes) == 0:
+            print("Nodes have not been generated yet!")
+        return len(self.globalNodes)
+
+    def getNumberofElements(self):
+        ''' Returns the number of elements defined within the current context of the mesh.
+        '''
+        if len(self.elements) == 0:
+            print("Elements have not been generated yet!")
+        return len(self.elements)
+
     def genNodes(self):
         ''' Generates array of nodes in O(Nl * Nw * Nt) time.
         '''
+        nodeCount = 0
+        nodeThres = 8
+        nodeIDThres = nodeThres - 1
         for l in self.lpos:
             for w in self.wpos:
                 for t in self.tpos:
+                    # Creating a node object with the (l, w, t) coordinates
                     node = Node(l, w, t)
+                    # Appending newly constructed node to global node list in mesh object
                     self.globalNodes.append(node)
                     print("Node ID: ", node.id)
                     print("Node coords: ", [node.x, node.y, node.z])
+                    if node.id > 0 and node.id % nodeIDThres == 0:
+                        # If you've generated 8 nodes, get the last 8 nodes,
+                        # create an element, and reset the counter 
+                        elementNodes = self.globalNodes[-nodeThres:]
+                        element = Element(elementNodes)
+                        # Appending newly constructed element to element list in mesh object
+                        self.elements.append(element)
+                        nodeCount = 0
+                    nodeCount += 1
+
