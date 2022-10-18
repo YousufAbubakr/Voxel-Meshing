@@ -237,8 +237,12 @@ class Mesh:
         ax = fig.gca(projection = '3d')
         ax.set_aspect('auto')
         # Plotting
-        ax.voxels(np.ones((self.Nl - 1, self.Nw - 1, self.Nt - 1)), 
-                facecolors = '#1f77b430', edgecolors = 'gray')
+        filled = np.ones((self.Nl - 1, self.Nw - 1, self.Nt - 1))
+        x, y, z = np.indices(np.array(filled.shape) + 1)
+        ax.voxels(x * self.l/(self.Nl - 1), 
+                    y * self.w/(self.Nw - 1), 
+                    z * self.t/(self.Nt - 1), 
+                    filled, facecolors = '#1f77b430', edgecolors = 'gray')
         ax.set_title('Voxel Mesh Plot')
         ax.set_xlabel('X axis - Length')
         ax.set_ylabel('Y axis - Width')

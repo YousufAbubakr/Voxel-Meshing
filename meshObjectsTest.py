@@ -57,11 +57,32 @@ class TestStringMethods(unittest.TestCase):
         multiMesh = Mesh(length, width, thickness, Nl, Nw, Nt)
         multiMesh.genNodes()
         self.assertEqual(Nl * Nw * Nt, multiMesh.getNumberofNodes())
-        multiMesh.plot3D()
         #self.assertEqual((Nl - 1) * (Nw - 1)* (Nt - 1), multiMesh.getNumberofElements())
         #self.assertTrue(([0, length] == unitMesh.lpos).all())
         #self.assertTrue(([0, width] == unitMesh.wpos).all())
         #self.assertTrue(([0, thickness] == unitMesh.tpos).all())
+
+    def test3DPlotting(self):
+        ''' Tests 3D plotting with a variety of geometric test variables.
+        '''
+        length = 11
+        width = 6
+        thickness = 0.2
+        Nl = 6
+        Nw = 4
+        Nt = 3
+        testMesh = Mesh(length, width, thickness, Nl, Nw, Nt)
+        testMesh.genNodes()
+        testMesh.plot3D()
+        length = 5
+        width = 2
+        thickness = 1
+        Nl = 3
+        Nw = 4
+        Nt = 3
+        testMesh = Mesh(length, width, thickness, Nl, Nw, Nt)
+        testMesh.genNodes()
+        testMesh.plot3D()
 
 if __name__ == '__main__':
     unittest.main()
