@@ -1,5 +1,5 @@
-import matplotlib.pyplot as plt
 import numpy as np
+import matplotlib.pyplot as plt
 
 # Defines Node, Element, and Mesh classes for voxel mesh generation
 
@@ -16,14 +16,6 @@ class Node:
                      Node IDs = [1, 2]
     1_ _ _ _ 2       Node 1 Coordinate Location: (x1, y1, z1)
                      Node 2 Coordinate Location: (x2, y2, z2)
-    
-    Initialization Input Variables:
-        x, y, z: (x, y, z) coordinate location of node
-
-    Attributes (static variables):
-        x, y, z: (x, y, z) coordinate location of node
-        coord: (x, y, z) tuple of node coordinate
-        id: global node ID
     '''
 
     # Global node IDs are defined on a rolling basis, which means 
@@ -36,6 +28,14 @@ class Node:
         ''' Initializing instance of a node given a set of (x, y, z)
         coordinates. Note that every time a node is initialized,
         Node.lastID (a Node class variable) is increased by 1.
+
+        Initialization (input variables):
+            x, y, z: (x, y, z) coordinate location of node
+
+        Attributes (static variables):
+            x, y, z: (x, y, z) coordinate location of node
+            coord: (x, y, z) tuple of node coordinate
+            id: global node ID
         '''
         # Instance Variables:
         self.x = x
@@ -57,16 +57,6 @@ class Element:
     |       |       E1 Local Node IDs = [1, 2, 3, 4]
     |   E1  |       Global Node IDs = [1, 2, 3, 4] 
     |3 _ _ _|4
-    
-    Initialization Input Variables:
-        nodes: set of local node IDs that uniquely describe an element
-
-    Attributes (static variables):
-        nodes: set of local node IDs that uniquely decribe an element
-            ** Note: Local node IDs [N1, N2, ..., N8] are only defined 
-            in the context of element objects **
-        centroid: (xc, yc, zc) coordinate of centroid of element
-        id: element ID
     '''
 
     # Similar to global node IDs, element IDs are defined on a 
@@ -78,6 +68,16 @@ class Element:
         ''' Initializing instance of a element given a set of nodes. 
         Note that every time an element is initialized, Element.lastID 
         (an Element class variable) is increased by 1.
+
+        Initialization (input variables):
+            nodes: set of local node IDs that uniquely describe an element
+
+        Attributes (static variables):
+            nodes: set of local node IDs that uniquely decribe an element
+                ** Note: Local node IDs [N1, N2, ..., N8] are only defined 
+                in the context of element objects **
+            centroid: (xc, yc, zc) coordinate of centroid of element
+            id: element ID
         '''
         # Instance Variables:
         self.nodes = nodes
@@ -97,18 +97,6 @@ class Mesh:
     |       |       |        E4 Local Node IDs = [5, 6, 8, 9]
     |  E3   |  E4   |        Global Node IDs = [1, 2, 3, 4, 5, 6, 7, 8, 9] 
     |7 _ _ 8|_ _ _ _|9       Mesh = Elements
-    
-    Initialization Input Variables:
-        l, w, t: length, width, and thickness of mesh, 
-                 where (li, wi, ti) corresponds to an (x, y, z) coordinate system
-        Nl, Nw, Nt: number of elements along the length, width, and thickness directions
-
-    Attributes (static variables):
-        l, w, t: length, width, and thickness of mesh
-        Nl, Nw, Nt: number of elements along the length, width, and thickness directions
-        lpos, wpos, tpos: linspace of discrete x, y, z positions given by l, w, t and Nl, Nw, Nt
-        globalNodes: set of all global node objects
-        elements: set of all element objects
     '''
 
     def __init__(self, l, w, t, Nl, Nw, Nt):
@@ -119,7 +107,22 @@ class Mesh:
         correspond to the number of linearly spaced coordinates, so add
         1 to Nl, Nw, and Nt to appropriately define the number of elements
         along the l, w, and t directions.
+
+        Initialization (input variables):
+            l, w, t: length, width, and thickness of mesh, 
+                     where (li, wi, ti) corresponds to an (x, y, z) coordinate system
+            Nl, Nw, Nt: number of elements along the length, width, and thickness directions
+
+        Attributes (static variables):
+            l, w, t: length, width, and thickness of mesh
+            Nl, Nw, Nt: number of elements along the length, width, and thickness directions
+            lpos, wpos, tpos: linspace of discrete x, y, z positions given by l, w, t and Nl, Nw, Nt
+            globalNodes: set of all global node objects
+            elements: set of all element objects
         '''
+        # Resetting node IDs for new mesh:
+        Node.lastID = 0
+
         # Instance Variables:
         assert l > 0 and w > 0 and t > 0, "Geometries must be positive!"
         assert Nl > 1 and Nw > 1 and Nt > 1, "Number of elements must be greater than 0!"
@@ -149,13 +152,63 @@ class Mesh:
         '''
         if len(self.globalNodes) == 0:
             print("Nodes have not been generated yet!")
+            return None
         return self.globalNodes
+
+    def getNodeX(self):
+        ''' Returns an array of the nodes' x-coordinates nodes defined within 
+            the current context of the mesh.
+        '''
+        if len(self.globalNodes) == 0:
+            print("Nodes have not been generated yet!")
+            return None
+        dim = self.getNumberofNodes()
+        nodes = self.getNodes()
+        xcoords = np.empty([dim, 1])
+        i = 0
+        for node in nodes:
+            xcoords[i] = node.x
+            i += 1
+        return xcoords
+
+    def getNodeY(self):
+        ''' Returns an array of the nodes' y-coordinates nodes defined within 
+            the current context of the mesh.
+        '''
+        if len(self.globalNodes) == 0:
+            print("Nodes have not been generated yet!")
+            return None
+        dim = self.getNumberofNodes()
+        nodes = self.getNodes()
+        ycoords = np.empty([dim, 1])
+        i = 0
+        for node in nodes:
+            ycoords[i] = node.y
+            i += 1
+        return ycoords
+
+    def getNodeZ(self):
+        ''' Returns an array of the nodes' z-coordinates nodes defined within 
+            the current context of the mesh.
+        '''
+        if len(self.globalNodes) == 0:
+            print("Nodes have not been generated yet!")
+            return None
+        dim = self.getNumberofNodes()
+        nodes = self.getNodes()
+        zcoords = np.empty([dim, 1])
+        i = 0
+        for node in nodes:
+            zcoords[i] = node.z
+            i += 1
+        return zcoords
 
     def getElements(self):
         ''' Returns the elements defined within the current context of the mesh.
         '''
         if len(self.elements) == 0:
             print("Elements have not been generated yet!")
+            return None
         return self.elements
 
     def getNumberofNodes(self):
@@ -163,6 +216,7 @@ class Mesh:
         '''
         if len(self.globalNodes) == 0:
             print("Nodes have not been generated yet!")
+            return None
         return len(self.globalNodes)
 
     def getNumberofElements(self):
@@ -170,7 +224,12 @@ class Mesh:
         '''
         if len(self.elements) == 0:
             print("Elements have not been generated yet!")
+            return None
         return len(self.elements)
+
+    def plot3D(self):
+        ''' Plots array of nodes
+        '''
 
     def genNodes(self):
         ''' Generates array of nodes in O(Nl * Nw * Nt) time.
@@ -196,4 +255,3 @@ class Mesh:
                         self.elements.append(element)
                         nodeCount = 0
                     nodeCount += 1
-
