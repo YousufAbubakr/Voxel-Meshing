@@ -56,7 +56,8 @@ class TestStringMethods(unittest.TestCase):
         multiMesh = Mesh(length, width, thickness, Nl, Nw, Nt)
         multiMesh.genNodes()
         self.assertEqual(Nl * Nw * Nt, multiMesh.getNumberofNodes())
-        #self.assertEqual((Nl - 1) * (Nw - 1)* (Nt - 1), multiMesh.getNumberofElements())
+        self.assertEqual((Nl - 1) * (Nw - 1)* (Nt - 1), multiMesh.getNumberofElements())
+        multiMesh.plot3D()
 
     def testUnitElementGeneration(self):
         ''' Tests unit element generation by using self.R parameter instead of
@@ -68,7 +69,7 @@ class TestStringMethods(unittest.TestCase):
         R = 2
         testMesh = Mesh(length, width, thickness, R)
         testMesh.genNodes()
-        testMesh.plot3D()
+        #testMesh.plot3D()
 
     def test3DPlotting(self):
         ''' Tests 3D plotting with a variety of geometric test variables.
@@ -81,7 +82,7 @@ class TestStringMethods(unittest.TestCase):
         Nt = 3
         testMesh = Mesh(length, width, thickness, Nl, Nw, Nt)
         testMesh.genNodes()
-        testMesh.plot3D()
+        #testMesh.plot3D()
 
 if __name__ == '__main__':
     unittest.main()
