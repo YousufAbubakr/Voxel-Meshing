@@ -71,15 +71,5 @@ class TestStringMethods(unittest.TestCase):
         testMesh.genNodes()
         testMesh.plot3D()
 
-        length = 5
-        width = 2
-        thickness = 1
-        Nl = 3
-        Nw = 4
-        Nt = 3
-        testMesh = Mesh(length, width, thickness, Nl, Nw, Nt)
-        testMesh.genNodes()
-        testMesh.plot3D()
-
 if __name__ == '__main__':
     unittest.main()
