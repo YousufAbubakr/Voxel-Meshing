@@ -38,9 +38,6 @@ class TestStringMethods(unittest.TestCase):
         self.assertEqual(Nl * Nw * Nt, len(unitMesh.getNodeX()))
         self.assertEqual(Nl * Nw * Nt, len(unitMesh.getNodeY()))
         self.assertEqual(Nl * Nw * Nt, len(unitMesh.getNodeZ()))
-        print(unitMesh.getNodeX())
-        print(unitMesh.getNodeY())
-        print(unitMesh.getNodeZ())
 
     def testMultiElementMesh(self):
         ''' Tests multi-element mesh generation by defining a 2 x 3 x 4 unit
@@ -55,9 +52,12 @@ class TestStringMethods(unittest.TestCase):
         assert Nl == 3 and Nw == 4 and Nt == 5, "Want 24 elements for this test!"
         multiMesh = Mesh(length, width, thickness, Nl, Nw, Nt)
         multiMesh.genNodes()
+        print(multiMesh.getNodeX())
+        print(multiMesh.getNodeY())
+        print(multiMesh.getNodeZ())
+        multiMesh.plot3D()
         self.assertEqual(Nl * Nw * Nt, multiMesh.getNumberofNodes())
         self.assertEqual((Nl - 1) * (Nw - 1)* (Nt - 1), multiMesh.getNumberofElements())
-        multiMesh.plot3D()
 
     def testUnitElementGeneration(self):
         ''' Tests unit element generation by using self.R parameter instead of
