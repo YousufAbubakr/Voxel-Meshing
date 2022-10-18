@@ -100,7 +100,7 @@ class Mesh:
     |7 _ _ 8|_ _ _ _|9       Mesh = Elements
     '''
 
-    def __init__(self, l, w, t, Nl, Nw, Nt):
+    def __init__(self, l, w, t, *args):
         ''' Initializing instance of a mesh given a set of geometry and 
         meshing parameters. 
         
@@ -112,10 +112,14 @@ class Mesh:
         Initialization (input variables):
             l, w, t: length, width, and thickness of mesh, 
                      where (li, wi, ti) corresponds to an (x, y, z) coordinate system
-            Nl, Nw, Nt: number of elements along the length, width, and thickness directions
+            *args: R - unit element edge length OR [Nl, Nw, Nt] - number of elements along
+                     the length, width, and thickness directions
+                     ** Note that the R parameter works best when your specimen geometry is cubic
+                     because R must be smaller than the shortest of the length, width, and thickness **
 
         Attributes (static variables):
             l, w, t: length, width, and thickness of mesh
+            R: unit element edge length
             Nl, Nw, Nt: number of elements along the length, width, and thickness directions
             lpos, wpos, tpos: linspace of discrete x, y, z positions given by l, w, t and Nl, Nw, Nt
             globalNodes: set of all global node objects
@@ -126,13 +130,22 @@ class Mesh:
 
         # Instance Variables:
         assert l > 0 and w > 0 and t > 0, "Geometries must be positive!"
-        assert Nl > 1 and Nw > 1 and Nt > 1, "Number of elements must be greater than 0!"
+        assert len(args) == 1 or len(args) == 3, "*args parameter must be of length 1 or length 3!"
+        if len(args) == 1:
+            self.R = args[0]
+            assert self.R <= l and self.R <= w and self.R <= t, "Unit edge lengths must be smaller than specien geometry!"
+            self.Nl = int(l//self.R + 1)
+            self.Nw = int(w//self.R + 1)
+            self.Nt = int(t//self.R + 1)
+        elif len(args) == 3:
+            self.R = None
+            self.Nl = args[0]
+            self.Nw = args[1]
+            self.Nt = args[2]
+        assert self.Nl > 1 and self.Nw > 1 and self.Nt > 1, "Number of elements must be greater than 0!"
         self.l = l
         self.w = w
         self.t = t
-        self.Nl = Nl
-        self.Nw = Nw
-        self.Nt = Nt
         self.globalNodes = []
         self.elements = []
         # Linearly spaced unit coordinates are defined such that there
@@ -140,9 +153,9 @@ class Mesh:
         # Nw, or Nt - coordinate nodes along the given direction, and 
         # hence N(l, w, t) - 1 elements along the given direction as 
         # well.
-        self.lpos = np.linspace(0, l, Nl)
-        self.wpos = np.linspace(0, w, Nw)
-        self.tpos = np.linspace(0, t, Nt)
+        self.lpos = np.linspace(0, l, self.Nl)
+        self.wpos = np.linspace(0, w, self.Nw)
+        self.tpos = np.linspace(0, t, self.Nt)
 
         print(f"X Coordinates: {self.lpos}")
         print(f"Y Coordinates: {self.wpos}")

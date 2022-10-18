@@ -58,6 +58,18 @@ class TestStringMethods(unittest.TestCase):
         self.assertEqual(Nl * Nw * Nt, multiMesh.getNumberofNodes())
         #self.assertEqual((Nl - 1) * (Nw - 1)* (Nt - 1), multiMesh.getNumberofElements())
 
+    def testUnitElementGeneration(self):
+        ''' Tests unit element generation by using self.R parameter instead of
+            Nl, Nw, and Nt parameters.
+        '''
+        length = 5
+        width = 5
+        thickness = 5
+        R = 2
+        testMesh = Mesh(length, width, thickness, R)
+        testMesh.genNodes()
+        testMesh.plot3D()
+
     def test3DPlotting(self):
         ''' Tests 3D plotting with a variety of geometric test variables.
         '''
