@@ -35,10 +35,13 @@ class TestStringMethods(unittest.TestCase):
         unitMesh = Mesh(length, width, thickness, Nl, Nw, Nt)
         unitMesh.genNodes()
         self.assertEqual(Nl * Nw * Nt, unitMesh.getNumberofNodes())
-        self.assertEqual(1, unitMesh.getNumberofElements())
-        self.assertTrue(([0, length] == unitMesh.lpos).all())
-        self.assertTrue(([0, width] == unitMesh.wpos).all())
-        self.assertTrue(([0, thickness] == unitMesh.tpos).all())
+        self.assertEqual(Nl * Nw * Nt, len(unitMesh.getNodeX()))
+        self.assertEqual(Nl * Nw * Nt, len(unitMesh.getNodeY()))
+        self.assertEqual(Nl * Nw * Nt, len(unitMesh.getNodeZ()))
+        print(unitMesh.getNodeX())
+        print(unitMesh.getNodeY())
+        print(unitMesh.getNodeZ())
+        #unitMesh.plot3D()
 
     def testMultiElementMesh(self):
         ''' Tests multi-element mesh generation by defining a 2 x 3 x 4 unit
@@ -54,6 +57,7 @@ class TestStringMethods(unittest.TestCase):
         multiMesh = Mesh(length, width, thickness, Nl, Nw, Nt)
         multiMesh.genNodes()
         self.assertEqual(Nl * Nw * Nt, multiMesh.getNumberofNodes())
+        multiMesh.plot3D()
         #self.assertEqual((Nl - 1) * (Nw - 1)* (Nt - 1), multiMesh.getNumberofElements())
         #self.assertTrue(([0, length] == unitMesh.lpos).all())
         #self.assertTrue(([0, width] == unitMesh.wpos).all())

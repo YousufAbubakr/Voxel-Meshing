@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from mpl_toolkits import mplot3d
 
 # Defines Node, Element, and Mesh classes for voxel mesh generation
 
@@ -164,7 +165,7 @@ class Mesh:
             return None
         dim = self.getNumberofNodes()
         nodes = self.getNodes()
-        xcoords = np.empty([dim, 1])
+        xcoords = np.empty(dim)
         i = 0
         for node in nodes:
             xcoords[i] = node.x
@@ -180,7 +181,7 @@ class Mesh:
             return None
         dim = self.getNumberofNodes()
         nodes = self.getNodes()
-        ycoords = np.empty([dim, 1])
+        ycoords = np.empty(dim)
         i = 0
         for node in nodes:
             ycoords[i] = node.y
@@ -196,7 +197,7 @@ class Mesh:
             return None
         dim = self.getNumberofNodes()
         nodes = self.getNodes()
-        zcoords = np.empty([dim, 1])
+        zcoords = np.empty(dim)
         i = 0
         for node in nodes:
             zcoords[i] = node.z
@@ -228,8 +229,21 @@ class Mesh:
         return len(self.elements)
 
     def plot3D(self):
-        ''' Plots array of nodes
+        ''' Plots array of nodes in the form of a voxel mesh with matplotlib library functions
         '''
+        # Initializing figure
+        fig = plt.figure()
+        # Syntax for 3-D projection
+        ax = fig.gca(projection = '3d')
+        ax.set_aspect('auto')
+        # Plotting
+        ax.voxels(np.ones((self.Nl - 1, self.Nw - 1, self.Nt - 1)), 
+                facecolors = '#1f77b430', edgecolors = 'gray')
+        ax.set_title('Voxel Mesh Plot')
+        ax.set_xlabel('X axis - Length')
+        ax.set_ylabel('Y axis - Width')
+        ax.set_zlabel('Z axis - Thickness')
+        plt.show()
 
     def genNodes(self):
         ''' Generates array of nodes in O(Nl * Nw * Nt) time.
@@ -244,8 +258,8 @@ class Mesh:
                     node = Node(l, w, t)
                     # Appending newly constructed node to global node list in mesh object
                     self.globalNodes.append(node)
-                    print("Node ID: ", node.id)
-                    print("Node coords: ", [node.x, node.y, node.z])
+                    #print("Node ID: ", node.id)
+                    #print("Node coords: ", [node.x, node.y, node.z])
                     if node.id > 0 and node.id % nodeIDThres == 0:
                         # If you've generated 8 nodes, get the last 8 nodes,
                         # create an element, and reset the counter 
