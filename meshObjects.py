@@ -177,7 +177,7 @@ class Mesh:
         assert len(args) == 1 or len(args) == 3, "*args parameter must be of length 1 or length 3!"
         if len(args) == 1:
             self.R = args[0]
-            assert l % self.R == 0 and w % self.R == 0 and t % self.R == 0, "R must be a whole number factor of the length, width, and thickness!"
+            assert float(l/self.R).is_integer() and float(w/self.R).is_integer() and float(t/self.R).is_integer(), "R must be able to divide the length, width, and thickness!"
             assert self.R <= l and self.R <= w and self.R <= t, "Unit edge lengths must be smaller than specien geometry!"
             self.Nl = int(l//self.R + 1)
             self.Nw = int(w//self.R + 1)
