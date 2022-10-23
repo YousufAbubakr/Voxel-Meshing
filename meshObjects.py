@@ -267,13 +267,13 @@ class Mesh:
             Y = cornerNode.y
             Z = cornerNode.z
             # Generating array of 7 complementary nodes:
-            newCoordinates = [[X, Y, Z + delZ], 
-                                [X, Y + delY, Z], 
-                                [X, Y + delY, Z + delZ], 
-                                [X + delX, Y, Z], 
-                                [X + delX, Y, Z + delZ], 
+            newCoordinates = [[X, Y + delY, Z], 
+                                [X, Y + delY, Z + delZ],
+                                [X, Y, Z + delZ], 
+                                [X + delX, Y, Z],
                                 [X + delX, Y + delY, Z], 
-                                [X + delX, Y + delY, Z + delZ]]
+                                [X + delX, Y + delY, Z + delZ],
+                                [X + delX, Y, Z + delZ]]
             newNodes = []
             for coords in newCoordinates:
                 if not self.nodeCoordsInMesh(coords):
