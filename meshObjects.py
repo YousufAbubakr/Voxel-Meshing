@@ -103,7 +103,7 @@ class Element:
         nodeIDs = []
         for node in self.nodes:
             nodeIDs.append(node.id)
-        return "Element( id = " + str(self.id) + " )" + "node IDs = " + str(nodeIDs) + ")"
+        return "Element(id=" + str(self.id) + ", " + "node IDs=" + str(nodeIDs) + ")"
 
 
 class Mesh:
@@ -184,7 +184,7 @@ class Mesh:
     def __str__(self):
         ''' Print method for Mesh object
         '''
-        return self.name + ": " + str(self.getNumberofElements()) + " Elements " + str(self.getNumberofNodes()) + " Nodes"
+        return "\n" + self.name + ": " + str(self.getNumberofElements()) + " Elements, " + str(self.getNumberofNodes()) + " Nodes"
 
     def printNodes(self):
         ''' Node printing method for Mesh object
@@ -244,15 +244,22 @@ class Mesh:
             Y = cornerNode.y
             Z = cornerNode.z
             # Generating array of 7 complementary nodes:
-            newNodes = [Node(X, Y, Z + delZ), 
-                            Node(X, Y + delY, Z), 
-                            Node(X, Y + delY, Z + delZ),
-                            Node(X + delX, Y, Z),
-                            Node(X + delX, Y, Z + delZ),
-                            Node(X + delX, Y + delY, Z),
-                            Node(X + delX, Y + delY, Z + delZ)]
+            newCoordinates = [[X, Y, Z + delZ], 
+                                [X, Y + delY, Z], 
+                                [X, Y + delY, Z + delZ], 
+                                [X + delX, Y, Z], 
+                                [X + delX, Y, Z + delZ], 
+                                [X + delX, Y + delY, Z], 
+                                [X + delX, Y + delY, Z + delZ]]
+            newNodes = []
+            for coords in newCoordinates:
+                if not self.nodeCoordsInMesh(coords):
+                    newNodes.append(Node(coords[0], coords[1], coords[2]))
+                else:
+                    node = self.findNode(coords)
+                    newNodes.append(node)
             # Element generation:
-            elementNodes = []
+            elementNodes = [cornerNode]
             for node in newNodes:
                 if not self.nodeInMesh(node):
                     self.globalNodes.append(node)
@@ -268,6 +275,30 @@ class Mesh:
             if meshNode == node:
                 return True
         return False
+
+    def nodeCoordsInMesh(self, nodeCoords):
+        ''' Subroutine that determins whether the input node coordinates are already
+            defined within the context of the mesh.
+        '''
+        X = nodeCoords[0]
+        Y = nodeCoords[1]
+        Z = nodeCoords[2]
+        for meshNode in self.globalNodes:
+            if all([meshNode.x == X, meshNode.y == Y, meshNode.z == Z]):
+                return True
+        return False
+
+    def findNode(self, coords):
+        ''' Subroutine that finds the node object with the given coordinates.
+            Returns None if no node with the given coordinates are found.
+        '''
+        X = coords[0]
+        Y = coords[1]
+        Z = coords[2]
+        for meshNode in self.globalNodes:
+            if all([meshNode.x == X, meshNode.y == Y, meshNode.z == Z]):
+                return meshNode
+        return None
 
 
 
