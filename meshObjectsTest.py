@@ -13,7 +13,7 @@ class TestStringMethods(unittest.TestCase):
         Nl = 2
         Nw = 2
         Nt = 2
-        name = "unitMesh"
+        name = "Unit Cell Mesh"
         assert Nl == 2 and Nw == 2 and Nt == 2, "Only want 1 element for this test!"
         unitMesh = Mesh(length, width, thickness, name, Nl, Nw, Nt)
         unitMesh.generateMesh()
@@ -32,7 +32,7 @@ class TestStringMethods(unittest.TestCase):
         Nl = 2
         Nw = 2
         Nt = 2
-        name = "getters"
+        name = "Testing Getters"
         assert Nl == 2 and Nw == 2 and Nt == 2, "Only want 1 element for this test!"
         unitMesh = Mesh(length, width, thickness, name, Nl, Nw, Nt)
         unitMesh.generateMesh()
@@ -51,7 +51,7 @@ class TestStringMethods(unittest.TestCase):
         Nl = 3
         Nw = 3
         Nt = 3
-        name = "multiElement"
+        name = "Multi Element Mesh"
         assert Nl == 3 and Nw == 3 and Nt == 3, "Want 24 elements for this test!"
         multiMesh = Mesh(length, width, thickness, name, Nl, Nw, Nt)
         multiMesh.generateMesh()
@@ -62,6 +62,27 @@ class TestStringMethods(unittest.TestCase):
         self.assertEqual(Nl * Nw * Nt, multiMesh.getNumberofNodes())
         self.assertEqual((Nl - 1) * (Nw - 1)* (Nt - 1), multiMesh.getNumberofElements())
 
+    def testNonUniformMesh(self):
+        ''' Tests multi-element mesh generation by defining a 6 x 8 x 2 unit
+        size box that is defined by (Nl - 1)(Nw - 1)(Nt - 1) = 3 x 5 x 7 = 105 elements.
+        '''
+        length = 6
+        width = 8
+        thickness = 2
+        Nl = 4
+        Nw = 6
+        Nt = 8
+        name = "Nonuniform Mesh"
+        assert Nl == 4 and Nw == 6 and Nt == 8, "Want 105 elements for this test!"
+        nonuniform = Mesh(length, width, thickness, name, Nl, Nw, Nt)
+        nonuniform.generateMesh()
+        print(nonuniform)
+        nonuniform.printNodes()
+        nonuniform.printElements()
+        nonuniform.plot3D()
+        self.assertEqual(Nl * Nw * Nt, nonuniform.getNumberofNodes())
+        self.assertEqual((Nl - 1) * (Nw - 1)* (Nt - 1), nonuniform.getNumberofElements())
+
     def testUnitElementGeneration(self):
         ''' Tests unit element generation by using self.R parameter instead of
             Nl, Nw, and Nt parameters.
@@ -70,7 +91,7 @@ class TestStringMethods(unittest.TestCase):
         width = 15
         thickness = 15
         R = 5
-        name = "unit"
+        name = "R-Generated Mesh"
         testMesh = Mesh(length, width, thickness, name, R)
         testMesh.generateMesh()
         print(testMesh)
@@ -87,13 +108,15 @@ class TestStringMethods(unittest.TestCase):
         Nl = 6
         Nw = 4
         Nt = 3
-        name = "plotting"
+        name = "Testing Plotting"
         testMesh = Mesh(length, width, thickness, name, Nl, Nw, Nt)
         testMesh.generateMesh()
         print(testMesh)
         testMesh.printNodes()
         testMesh.printElements()
         testMesh.plot3D()
+        self.assertEqual(Nl * Nw * Nt, testMesh.getNumberofNodes())
+        self.assertEqual((Nl - 1) * (Nw - 1)* (Nt - 1), testMesh.getNumberofElements())
 
 if __name__ == '__main__':
     unittest.main()

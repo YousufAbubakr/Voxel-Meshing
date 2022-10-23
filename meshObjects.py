@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from mpl_toolkits import mplot3d
+from math import isclose
 
 # Defines Node, Element, and Mesh classes for voxel mesh generation
 
@@ -317,7 +317,7 @@ class Mesh:
         Y = nodeCoords[1]
         Z = nodeCoords[2]
         for meshNode in self.globalNodes:
-            if all([meshNode.x == X, meshNode.y == Y, meshNode.z == Z]):
+            if all([isclose(meshNode.x, X), isclose(meshNode.y, Y), isclose(meshNode.z, Z)]):
                 return True
         return False
 
@@ -329,7 +329,7 @@ class Mesh:
         Y = coords[1]
         Z = coords[2]
         for meshNode in self.globalNodes:
-            if all([meshNode.x == X, meshNode.y == Y, meshNode.z == Z]):
+            if all([isclose(meshNode.x, X), isclose(meshNode.y, Y), isclose(meshNode.z, Z)]):
                 return meshNode
         return None
 
