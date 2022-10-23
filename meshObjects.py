@@ -55,7 +55,7 @@ class Node:
     def __str__(self):
         ''' Print method for Node object
         '''
-        return "Node( id = " + str(self.id) + " )" + "(x, y, z) = (" + str((self.x, self.y, self.z)) + "))"
+        return "Node(id=" + str(self.id) + ", " + "(x, y, z)=" + str((self.x, self.y, self.z)) + ")"
 
 
 class Element:
@@ -186,6 +186,18 @@ class Mesh:
         '''
         return self.name + ": " + str(self.getNumberofElements()) + " Elements " + str(self.getNumberofNodes()) + " Nodes"
 
+    def printNodes(self):
+        ''' Node printing method for Mesh object
+        '''
+        for node in self.getNodes():
+            print(node)
+
+    def printElements(self):
+        ''' Element printing method for Mesh object
+        '''
+        for element in self.getElements():
+            print(element)
+
     def plot3D(self):
         ''' Plots array of nodes in the form of a voxel mesh with matplotlib library functions
         '''
@@ -256,6 +268,9 @@ class Mesh:
             if meshNode == node:
                 return True
         return False
+
+
+
 
     # Getter methods:
     def getNodes(self):

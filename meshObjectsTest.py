@@ -58,6 +58,8 @@ class TestStringMethods(unittest.TestCase):
         multiMesh.generateMesh()
         multiMesh.plot3D()
         print(multiMesh)
+        multiMesh.printNodes()
+        multiMesh.printElements()
         self.assertEqual(Nl * Nw * Nt, multiMesh.getNumberofNodes())
         self.assertEqual((Nl - 1) * (Nw - 1)* (Nt - 1), multiMesh.getNumberofElements())
 
