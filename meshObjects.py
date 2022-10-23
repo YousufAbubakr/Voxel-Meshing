@@ -46,6 +46,12 @@ class Node:
         self.id = Node.lastID
         Node.lastID += 1
 
+    def __eq__(self, other):
+        ''' Equality method that determines whether two nodes are equivalent
+            based on their coordinates
+        '''
+        return all([self.x == other.x, self.y == other.y, self.z == other.z])
+
 class Element:
     ''' An "Element" instance is a meshing object such that an overall
     mesh is spactially partitioned into an array of unit cells. Each of
@@ -71,10 +77,10 @@ class Element:
         (an Element class variable) is increased by 1.
 
         Initialization (input variables):
-            nodes: set of local node IDs that uniquely describe an element
+            nodes: set of globally defined local node objects that uniquely describe an element
 
         Attributes (static variables):
-            nodes: set of local node IDs that uniquely decribe an element
+            nodes: set of globally defined local node objects that uniquely describe an element
                 ** Note: Local node IDs [N1, N2, ..., N8] are only defined 
                 in the context of element objects **
             centroid: (xc, yc, zc) coordinate of centroid of element
@@ -265,24 +271,44 @@ class Mesh:
     def genNodes(self):
         ''' Generates array of nodes in O(Nl * Nw * Nt) time.
         '''
-        nodeCount = 0
-        nodeThres = 8
-        nodeIDThres = nodeThres - 1
-        for l in self.lpos:
-            for w in self.wpos:
-                for t in self.tpos:
+        cornerNodes = []
+        for l in self.lpos[:-1]:
+            for w in self.wpos[:-1]:
+                for t in self.tpos[:-1]:
                     # Creating a node object with the (l, w, t) coordinates
                     node = Node(l, w, t)
                     # Appending newly constructed node to global node list in mesh object
+                    cornerNodes.append(node)
                     self.globalNodes.append(node)
-                    #print("Node ID: ", node.id)
-                    #print("Node coords: ", [node.x, node.y, node.z])
-                    if node.id > 0 and node.id % nodeIDThres == 0:
-                        # If you've generated 8 nodes, get the last 8 nodes,
-                        # create an element, and reset the counter 
-                        elementNodes = self.globalNodes[-nodeThres:]
-                        element = Element(elementNodes)
-                        # Appending newly constructed element to element list in mesh object
-                        self.elements.append(element)
-                        nodeCount = 0
-                    nodeCount += 1
+        delX = int(self.l/(self.Nl - 1))
+        delY = int(self.w/(self.Nw - 1))
+        delZ = int(self.t/(self.Nt - 1))
+        for cornerNode in cornerNodes:
+            X = cornerNode.x
+            Y = cornerNode.y
+            Z = cornerNode.z
+            print("Bottom Corner Node Coord Part 2: ", [X, Y, Z])
+            newNodes = [Node(X, Y, Z + delZ), 
+                            Node(X, Y + delY, Z), 
+                            Node(X, Y + delY, Z + delZ),
+                            Node(X + delX, Y, Z),
+                            Node(X + delX, Y, Z + delZ),
+                            Node(X + delX, Y + delY, Z),
+                            Node(X + delX, Y + delY, Z + delZ)]
+            elementNodes = []
+            for node in newNodes:
+                if not self.nodeInMesh(node):
+                    self.globalNodes.append(node)
+                elementNodes.append(node)     
+            element = Element(elementNodes)
+            self.elements.append(element)
+
+    def nodeInMesh(self, node):
+        ''' Subroutine that determins whether the input node is already
+            defined within the context of the mesh.
+        '''
+        for meshNode in self.globalNodes:
+            if meshNode == node:
+                return True
+        return False
+
