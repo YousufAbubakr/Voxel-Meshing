@@ -94,8 +94,24 @@ class Element:
         '''
         # Instance Variables:
         self.nodes = nodes
+        self.centroid = self.getCentroid()
         self.id = Element.lastID
         Element.lastID += 1
+
+    def getCentroid(self):
+        ''' Determines (x, y, z) coordinate location of element centroid
+        '''
+        X = []
+        Y = []
+        Z = []
+        for node in self.nodes:
+            X.append(node.x)
+            Y.append(node.y)
+            Z.append(node.z)
+        Xcen = np.mean(X)
+        Ycen = np.mean(Y)
+        Zcen = np.mean(Z)
+        return [Xcen, Ycen, Zcen]
 
     def __str__(self):
         ''' Print method for Element object
@@ -141,21 +157,26 @@ class Mesh:
 
         Attributes (static variables):
             l, w, t: length, width, and thickness of mesh
-            R: unit element edge length (if creating uniform mesh, other R = None)
+            R: unit element edge length (if creating uniform mesh, otherwise R = None)
             name: name of mesh in string format
             Nl, Nw, Nt: number of elements along the length, width, and thickness directions
             lpos, wpos, tpos: linspace of discrete x, y, z positions given by l, w, t and Nl, Nw, Nt
             globalNodes: set of all global node objects
             elements: set of all element objects
+            aspectRatio: volume aspect ratio (deviation away from perfect cube unit)
+                    ** aspectRatio = volume of unit cell/ volume of unit cube, so aspectRatio = 1
+                    corresponds to a high quality mesh, while aspectRatio --> 0 is a lower quality mesh
         '''
-        # Resetting node IDs for new mesh:
+        # Resetting node and element IDs for new mesh:
         Node.lastID = 0
+        Element.lastID = 0
 
         # Instance Variables:
         assert l > 0 and w > 0 and t > 0, "Geometries must be positive!"
         assert len(args) == 1 or len(args) == 3, "*args parameter must be of length 1 or length 3!"
         if len(args) == 1:
             self.R = args[0]
+            assert l % self.R == 0 and w % self.R == 0 and t % self.R == 0, "R must be a whole number factor of the length, width, and thickness!"
             assert self.R <= l and self.R <= w and self.R <= t, "Unit edge lengths must be smaller than specien geometry!"
             self.Nl = int(l//self.R + 1)
             self.Nw = int(w//self.R + 1)
@@ -172,6 +193,7 @@ class Mesh:
         self.name = name
         self.globalNodes = []
         self.elements = []
+        self.skewness = self.meshQuality()
         # Linearly spaced unit coordinates are defined such that there
         # are N(l, w, t) - where N(l, w, t) corresponds to either Nl, 
         # Nw, or Nt - coordinate nodes along the given direction, and 
@@ -184,7 +206,7 @@ class Mesh:
     def __str__(self):
         ''' Print method for Mesh object
         '''
-        return "\n" + self.name + ": " + str(self.getNumberofElements()) + " Elements, " + str(self.getNumberofNodes()) + " Nodes"
+        return "\n" + self.name + ": " + str(self.getNumberofElements()) + " Elements, " + str(self.getNumberofNodes()) + " Nodes, Element Quality: " + str(self.skewness) 
 
     def printNodes(self):
         ''' Node printing method for Mesh object
@@ -213,7 +235,7 @@ class Mesh:
                     y * self.w/(self.Nw - 1), 
                     z * self.t/(self.Nt - 1), 
                     filled, facecolors = '#1f77b430', edgecolors = 'gray')
-        ax.set_title('Voxel Mesh Plot')
+        ax.set_title(self.name + " Plot")
         ax.set_xlabel('X axis - Length')
         ax.set_ylabel('Y axis - Width')
         ax.set_zlabel('Z axis - Thickness')
@@ -233,9 +255,9 @@ class Mesh:
                     self.globalNodes.append(node)
                     cornerNodes.append(node)
         # Computing edge lengths in each direction:
-        delX = int(self.l/(self.Nl - 1))
-        delY = int(self.w/(self.Nw - 1))
-        delZ = int(self.t/(self.Nt - 1))
+        delX = float(self.l/(self.Nl - 1))
+        delY = float(self.w/(self.Nw - 1))
+        delZ = float(self.t/(self.Nt - 1))
         # For each corner node that was generated, there will be an additional 7 new nodes
         # that accompany this bottom corner node for each element.
         for cornerNode in cornerNodes:
@@ -266,6 +288,17 @@ class Mesh:
                 elementNodes.append(node)     
             element = Element(elementNodes)
             self.elements.append(element)
+
+    def meshQuality(self):
+        ''' Subroutine that determines mesh quality.
+        '''
+        edgeL = float(self.l/(self.Nl - 1))
+        edgeW = float(self.w/(self.Nw - 1))
+        edgeT = float(self.t/(self.Nt - 1))
+        minEdge = min([edgeL, edgeW, edgeT])
+        minVolume = float(np.multiply(np.multiply(minEdge, minEdge), minEdge))
+        actVolume = float(np.multiply(np.multiply(edgeL, edgeW), edgeT))
+        return actVolume/minVolume
 
     def nodeInMesh(self, node):
         ''' Subroutine that determins whether the input node is already

@@ -1,4 +1,3 @@
-from audioop import mul
 from meshObjects import *
 import unittest
 
@@ -56,10 +55,10 @@ class TestStringMethods(unittest.TestCase):
         assert Nl == 3 and Nw == 3 and Nt == 3, "Want 24 elements for this test!"
         multiMesh = Mesh(length, width, thickness, name, Nl, Nw, Nt)
         multiMesh.generateMesh()
-        multiMesh.plot3D()
         print(multiMesh)
         multiMesh.printNodes()
         multiMesh.printElements()
+        multiMesh.plot3D()
         self.assertEqual(Nl * Nw * Nt, multiMesh.getNumberofNodes())
         self.assertEqual((Nl - 1) * (Nw - 1)* (Nt - 1), multiMesh.getNumberofElements())
 
@@ -67,17 +66,20 @@ class TestStringMethods(unittest.TestCase):
         ''' Tests unit element generation by using self.R parameter instead of
             Nl, Nw, and Nt parameters.
         '''
-        length = 5
-        width = 5
-        thickness = 5
-        R = 2
+        length = 15
+        width = 15
+        thickness = 15
+        R = 5
         name = "unit"
         testMesh = Mesh(length, width, thickness, name, R)
         testMesh.generateMesh()
-        #testMesh.plot3D()
+        print(testMesh)
+        testMesh.printNodes()
+        testMesh.printElements()
+        testMesh.plot3D()
 
     def test3DPlotting(self):
-        ''' Tests 3D plotting with a variety of geometric test variables.
+        ''' Tests 3D plotting with a 11 x 6 x 0.2 sized specimen.
         '''
         length = 11
         width = 6
@@ -88,7 +90,10 @@ class TestStringMethods(unittest.TestCase):
         name = "plotting"
         testMesh = Mesh(length, width, thickness, name, Nl, Nw, Nt)
         testMesh.generateMesh()
-        #testMesh.plot3D()
+        print(testMesh)
+        testMesh.printNodes()
+        testMesh.printElements()
+        testMesh.plot3D()
 
 if __name__ == '__main__':
     unittest.main()
