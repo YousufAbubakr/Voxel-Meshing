@@ -13,7 +13,7 @@ class TestStringMethods(unittest.TestCase):
         Nl = 2
         Nw = 2
         Nt = 2
-        name = "Unit Cell Mesh"
+        name = "Unit _Cell_Mesh"
         assert Nl == 2 and Nw == 2 and Nt == 2, "Only want 1 element for this test!"
         unitMesh = Mesh(length, width, thickness, name, Nl, Nw, Nt)
         unitMesh.generateMesh()
@@ -32,7 +32,7 @@ class TestStringMethods(unittest.TestCase):
         Nl = 2
         Nw = 2
         Nt = 2
-        name = "Testing Getters"
+        name = "Testing_Getters"
         assert Nl == 2 and Nw == 2 and Nt == 2, "Only want 1 element for this test!"
         unitMesh = Mesh(length, width, thickness, name, Nl, Nw, Nt)
         unitMesh.generateMesh()
@@ -51,7 +51,7 @@ class TestStringMethods(unittest.TestCase):
         Nl = 3
         Nw = 3
         Nt = 3
-        name = "Multi Element Mesh"
+        name = "Multi_Element_Mesh"
         assert Nl == 3 and Nw == 3 and Nt == 3, "Want 24 elements for this test!"
         multiMesh = Mesh(length, width, thickness, name, Nl, Nw, Nt)
         multiMesh.generateMesh()
@@ -72,7 +72,7 @@ class TestStringMethods(unittest.TestCase):
         Nl = 4
         Nw = 6
         Nt = 8
-        name = "Nonuniform Mesh"
+        name = "Nonuniform_Mesh"
         assert Nl == 4 and Nw == 6 and Nt == 8, "Want 105 elements for this test!"
         nonuniform = Mesh(length, width, thickness, name, Nl, Nw, Nt)
         nonuniform.generateMesh()
@@ -80,6 +80,7 @@ class TestStringMethods(unittest.TestCase):
         nonuniform.printNodes()
         nonuniform.printElements()
         nonuniform.plot3D()
+        nonuniform.writeMesh()
         self.assertEqual(Nl * Nw * Nt, nonuniform.getNumberofNodes())
         self.assertEqual((Nl - 1) * (Nw - 1)* (Nt - 1), nonuniform.getNumberofElements())
 
@@ -91,7 +92,7 @@ class TestStringMethods(unittest.TestCase):
         width = 15
         thickness = 15
         R = 5
-        name = "R-Generated Mesh"
+        name = "R_Generated_Mesh"
         testMesh = Mesh(length, width, thickness, name, R)
         testMesh.generateMesh()
         print(testMesh)
@@ -108,7 +109,7 @@ class TestStringMethods(unittest.TestCase):
         Nl = 6
         Nw = 4
         Nt = 3
-        name = "Testing Plotting"
+        name = "Testing_Plotting"
         testMesh = Mesh(length, width, thickness, name, Nl, Nw, Nt)
         testMesh.generateMesh()
         print(testMesh)

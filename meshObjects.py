@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from math import isclose
+import os
 
 # Defines Node, Element, and Mesh classes for voxel mesh generation
 
@@ -23,7 +24,7 @@ class Node:
     # that after given a starting node ID, every node has an ID 
     # which is 1 more than the previously defined node ID. The 
     # starting node ID is called lastID and is defined as:
-    lastID = 0
+    lastID = 1
 
     def __init__(self, x, y, z):
         ''' Initializing instance of a node given a set of (x, y, z)
@@ -75,7 +76,7 @@ class Element:
     # Similar to global node IDs, element IDs are defined on a 
     # rolling basis. The starting element ID is called lastID and
     # is defined as:
-    lastID = 0
+    lastID = 1
 
     def __init__(self, nodes):
         ''' Initializing instance of a element given a set of nodes. 
@@ -168,8 +169,8 @@ class Mesh:
                     corresponds to a high quality mesh, while aspectRatio --> 0 is a lower quality mesh
         '''
         # Resetting node and element IDs for new mesh:
-        Node.lastID = 0
-        Element.lastID = 0
+        Node.lastID = 1
+        Element.lastID = 1
 
         # Instance Variables:
         assert l > 0 and w > 0 and t > 0, "Geometries must be positive!"
@@ -288,6 +289,35 @@ class Mesh:
                 elementNodes.append(node)     
             element = Element(elementNodes)
             self.elements.append(element)
+
+    def writeMesh(self):
+        ''' Writes .msh file in current working directory.
+        '''
+        # File Keywords:
+        format = "$MeshFormat\n"
+        formatNum = "4.1 0 8\n"
+        formatEnd = "$EndMeshFormat\n"
+        nodes = "$Nodes\n"
+        numNodes = str(self.getNumberofNodes()) + "\n"
+        nodesEnd = "$EndNodes\n"
+        elements = "$Elements\n"
+        numElements = str(self.getNumberofElements()) + "\n"
+        elementType = " 5 "
+        numTags = "0 0 0"
+        elementsEnd = "$EndElements\n"
+        # Writing to file
+        with open(self.name + ".msh", "w") as file:
+            # Writing data to a file
+            file.writelines([format, formatNum, formatEnd, nodes, numNodes])
+            for node in self.getNodes():
+                file.write(str(node.id) + " " + str(node.x) + " " + str(node.y) + " " + str(node.z) + "\n")
+            file.writelines([nodesEnd, elements, numElements])
+            for element in self.getElements():
+                IDs = ""
+                for node in element.nodes:
+                    IDs += " " + str(node.id)
+                file.write(str(element.id) + elementType + numTags + IDs + "\n")
+            file.write(elementsEnd)
 
     def meshQuality(self):
         ''' Subroutine that determines mesh quality.
