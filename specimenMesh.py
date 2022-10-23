@@ -12,6 +12,10 @@ thickness = 0.2
 R = float(thickness/2)
 name = "Large_Specimen_Mesh"
 specimen = Mesh(length, width, thickness, name, R)
+print("Number of Nodes in L Direction: ", specimen.Nl)
+print("Number of Nodes in W Direction: ", specimen.Nw)
+print("Number of Nodes in T Directio: ", specimen.Nt)
+print("Mesh Quality: ", specimen.skewness)
 specimen.generateMesh()
 print(specimen)
 specimen.printNodes()

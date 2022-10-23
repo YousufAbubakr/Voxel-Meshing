@@ -179,9 +179,9 @@ class Mesh:
             self.R = args[0]
             assert float(l/self.R).is_integer() and float(w/self.R).is_integer() and float(t/self.R).is_integer(), "R must be able to divide the length, width, and thickness!"
             assert self.R <= l and self.R <= w and self.R <= t, "Unit edge lengths must be smaller than specien geometry!"
-            self.Nl = int(l//self.R + 1)
-            self.Nw = int(w//self.R + 1)
-            self.Nt = int(t//self.R + 1)
+            self.Nl = int(l/self.R + 1)
+            self.Nw = int(w/self.R + 1)
+            self.Nt = int(t/self.R + 1)
         elif len(args) == 3:
             self.R = None
             self.Nl = args[0]
