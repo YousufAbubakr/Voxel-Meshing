@@ -151,7 +151,7 @@ class Mesh:
             l, w, t: length, width, and thickness of mesh, 
                      where (li, wi, ti) corresponds to an (x, y, z) coordinate system
             name: name of mesh in string format
-            *args: R - unit element edge length OR [Nl, Nw, Nt] - number of elements along
+            *args: R - unit element edge length OR Nl, Nw, Nt - number of elements along
                      the length, width, and thickness directions
                      ** Note that the R parameter works best when your specimen geometry is cubic
                      because R must be smaller than the shortest of the length, width, and thickness **
@@ -166,7 +166,7 @@ class Mesh:
             elements: set of all element objects
             aspectRatio: volume aspect ratio (deviation away from perfect cube unit)
                     ** aspectRatio = volume of unit cell/ volume of unit cube, so aspectRatio = 1
-                    corresponds to a high quality mesh, while aspectRatio --> 0 is a lower quality mesh
+                    corresponds to a high quality mesh, while aspectRatio >> 1 is a low quality mesh
         '''
         # Resetting node and element IDs for new mesh:
         Node.lastID = 1
