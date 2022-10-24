@@ -1,7 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from math import isclose
-import os
 
 # Defines Node, Element, and Mesh classes for voxel mesh generation
 
