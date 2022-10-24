@@ -4,7 +4,7 @@ from meshObjects import *
 
 # NOTE: avoid using Mesh.plot3D() for large meshes!!
 
-# 11 x 6 x 0.2 specimen, 10 elements across thickness:
+# 11 x 6 x 0.2 specimen, 10 elements across thickness (~20 minutes):
 length = 11
 width = 6
 thickness = 0.2
