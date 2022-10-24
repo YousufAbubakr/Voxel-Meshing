@@ -258,7 +258,7 @@ class Mesh:
                         # Appending newly constructed node to global node list in mesh object:
                         self.globalNodes.append(node)
                         cornerNodes.append(node)
-                        time.sleep(0.005)
+                        time.sleep(0.0005)
                         bar()
         # Computing edge lengths in each direction:
         delX = float(self.l/(self.Nl - 1))
@@ -295,7 +295,7 @@ class Mesh:
                     elementNodes.append(node)     
                 element = Element(elementNodes)
                 self.elements.append(element)
-                time.sleep(0.005)
+                time.sleep(0.0005)
                 bar()
 
     def writeMesh(self):
@@ -314,13 +314,13 @@ class Mesh:
         numTags = "0 0 0"
         elementsEnd = "$EndElements\n"
         # Writing to file
-        with alive_bar(len(self.getNodes()) + len(self.getElements()), theme='smooth', title=f'Writing Mesh File (.msh)...') as bar:
+        with alive_bar(len(self.getNodes()) + len(self.getElements()), theme='smooth', title=f'Writing Mesh File(.msh)...') as bar:
             with open(self.name + ".msh", "w") as file:
                 # Writing data to a file
                 file.writelines([format, formatNum, formatEnd, nodes, numNodes])
                 for node in self.getNodes():
                     file.write(str(node.id) + " " + str(node.x) + " " + str(node.y) + " " + str(node.z) + "\n")
-                    time.sleep(0.005)
+                    time.sleep(0.0005)
                     bar()
                 file.writelines([nodesEnd, elements, numElements])
                 for element in self.getElements():
@@ -328,7 +328,7 @@ class Mesh:
                     for node in element.nodes:
                         IDs += " " + str(node.id)
                     file.write(str(element.id) + elementType + numTags + IDs + "\n")
-                    time.sleep(0.005)
+                    time.sleep(0.0005)
                     bar()
                 file.write(elementsEnd)
 
