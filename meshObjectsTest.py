@@ -76,11 +76,11 @@ class TestStringMethods(unittest.TestCase):
         assert Nl == 4 and Nw == 6 and Nt == 8, "Want 105 elements for this test!"
         nonuniform = Mesh(length, width, thickness, name, Nl, Nw, Nt)
         nonuniform.generateMesh()
+        nonuniform.writeMesh()
         print(nonuniform)
         nonuniform.printNodes()
         nonuniform.printElements()
         nonuniform.plot3D()
-        nonuniform.writeMesh()
         self.assertEqual(Nl * Nw * Nt, nonuniform.getNumberofNodes())
         self.assertEqual((Nl - 1) * (Nw - 1)* (Nt - 1), nonuniform.getNumberofElements())
 

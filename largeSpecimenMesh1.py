@@ -17,7 +17,7 @@ name = "Large_Specimen_Mesh1"
 specimen = Mesh(length, width, thickness, name, Nl, Nw, Nt)
 print("Mesh Quality: ", specimen.skewness)
 specimen.generateMesh()
+specimen.writeMesh()
 print(specimen)
 specimen.printNodes()
 specimen.printElements()
-specimen.writeMesh()

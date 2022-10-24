@@ -1,6 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from math import isclose
+from alive_progress import alive_bar
+import time
 
 # Defines Node, Element, and Mesh classes for voxel mesh generation
 
@@ -246,48 +248,55 @@ class Mesh:
         '''
         # Method starts by finding and generating all the bottom corner nodes:
         cornerNodes = []
-        for l in self.lpos[:-1]:
-            for w in self.wpos[:-1]:
-                for t in self.tpos[:-1]:
-                    # Creating a node object with the (l, w, t) coordinates
-                    node = Node(l, w, t)
-                    # Appending newly constructed node to global node list in mesh object:
-                    self.globalNodes.append(node)
-                    cornerNodes.append(node)
+        numCornerNodes = len(self.lpos[:-1]) * len(self.wpos[:-1]) * len(self.tpos[:-1])
+        with alive_bar(numCornerNodes, theme='smooth', title=f'Generating Corner Nodes...') as bar:
+            for l in self.lpos[:-1]:
+                for w in self.wpos[:-1]:
+                    for t in self.tpos[:-1]:
+                        # Creating a node object with the (l, w, t) coordinates
+                        node = Node(l, w, t)
+                        # Appending newly constructed node to global node list in mesh object:
+                        self.globalNodes.append(node)
+                        cornerNodes.append(node)
+                        time.sleep(0.005)
+                        bar()
         # Computing edge lengths in each direction:
         delX = float(self.l/(self.Nl - 1))
         delY = float(self.w/(self.Nw - 1))
         delZ = float(self.t/(self.Nt - 1))
         # For each corner node that was generated, there will be an additional 7 new nodes
         # that accompany this bottom corner node for each element.
-        for cornerNode in cornerNodes:
-            # Getting (X, Y, Z) coordinates of each corner node
-            X = cornerNode.x
-            Y = cornerNode.y
-            Z = cornerNode.z
-            # Generating array of 7 complementary nodes:
-            newCoordinates = [[X, Y + delY, Z], 
-                                [X, Y + delY, Z + delZ],
-                                [X, Y, Z + delZ], 
-                                [X + delX, Y, Z],
-                                [X + delX, Y + delY, Z], 
-                                [X + delX, Y + delY, Z + delZ],
-                                [X + delX, Y, Z + delZ]]
-            newNodes = []
-            for coords in newCoordinates:
-                if not self.nodeCoordsInMesh(coords):
-                    newNodes.append(Node(coords[0], coords[1], coords[2]))
-                else:
-                    node = self.findNode(coords)
-                    newNodes.append(node)
-            # Element generation:
-            elementNodes = [cornerNode]
-            for node in newNodes:
-                if not self.nodeInMesh(node):
-                    self.globalNodes.append(node)
-                elementNodes.append(node)     
-            element = Element(elementNodes)
-            self.elements.append(element)
+        with alive_bar(len(cornerNodes), theme='smooth', title=f'Rest of Nodes/Elements... ') as bar:
+            for cornerNode in cornerNodes:
+                # Getting (X, Y, Z) coordinates of each corner node
+                X = cornerNode.x
+                Y = cornerNode.y
+                Z = cornerNode.z
+                # Generating array of 7 complementary nodes:
+                newCoordinates = [[X, Y + delY, Z], 
+                                    [X, Y + delY, Z + delZ],
+                                    [X, Y, Z + delZ], 
+                                    [X + delX, Y, Z],
+                                    [X + delX, Y + delY, Z], 
+                                    [X + delX, Y + delY, Z + delZ],
+                                    [X + delX, Y, Z + delZ]]
+                newNodes = []
+                for coords in newCoordinates:
+                    if not self.nodeCoordsInMesh(coords):
+                        newNodes.append(Node(coords[0], coords[1], coords[2]))
+                    else:
+                        node = self.findNode(coords)
+                        newNodes.append(node)
+                # Element generation:
+                elementNodes = [cornerNode]
+                for node in newNodes:
+                    if not self.nodeInMesh(node):
+                        self.globalNodes.append(node)
+                    elementNodes.append(node)     
+                element = Element(elementNodes)
+                self.elements.append(element)
+                time.sleep(0.005)
+                bar()
 
     def writeMesh(self):
         ''' Writes .msh file in current working directory.
@@ -305,18 +314,23 @@ class Mesh:
         numTags = "0 0 0"
         elementsEnd = "$EndElements\n"
         # Writing to file
-        with open(self.name + ".msh", "w") as file:
-            # Writing data to a file
-            file.writelines([format, formatNum, formatEnd, nodes, numNodes])
-            for node in self.getNodes():
-                file.write(str(node.id) + " " + str(node.x) + " " + str(node.y) + " " + str(node.z) + "\n")
-            file.writelines([nodesEnd, elements, numElements])
-            for element in self.getElements():
-                IDs = ""
-                for node in element.nodes:
-                    IDs += " " + str(node.id)
-                file.write(str(element.id) + elementType + numTags + IDs + "\n")
-            file.write(elementsEnd)
+        with alive_bar(len(self.getNodes()) + len(self.getElements()), theme='smooth', title=f'Writing Mesh File (.msh)...') as bar:
+            with open(self.name + ".msh", "w") as file:
+                # Writing data to a file
+                file.writelines([format, formatNum, formatEnd, nodes, numNodes])
+                for node in self.getNodes():
+                    file.write(str(node.id) + " " + str(node.x) + " " + str(node.y) + " " + str(node.z) + "\n")
+                    time.sleep(0.005)
+                    bar()
+                file.writelines([nodesEnd, elements, numElements])
+                for element in self.getElements():
+                    IDs = ""
+                    for node in element.nodes:
+                        IDs += " " + str(node.id)
+                    file.write(str(element.id) + elementType + numTags + IDs + "\n")
+                    time.sleep(0.005)
+                    bar()
+                file.write(elementsEnd)
 
     def meshQuality(self):
         ''' Subroutine that determines mesh quality.
