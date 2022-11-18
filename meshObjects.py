@@ -234,6 +234,8 @@ class Mesh:
     def findFibers(self):
         ''' Determines if elements in mesh are fiberous
         '''
+        print("W radius: ", self.Rw)
+        print("T radius: ", self.Rt)
         for element in self.getElements():
             if self.isElementFiber(element):
                 print("this element is fiber: ", print(element))
@@ -251,10 +253,11 @@ class Mesh:
             y_c = (i + 0.5) * self.spac + (2*i + 1) * self.Rw
             z_c = self.t/2
             center = [x_c, y_c, z_c]
+            print("coord: ", coord)
+            print("center: ", center)
             if self.isPointinEllipse(coord, center):
                 return True
-            else:
-                return False
+        return False
 
     def isPointinEllipse(self, coord, center):
         ''' Determines if a given point coordinates are enslosed 
