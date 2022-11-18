@@ -167,6 +167,7 @@ class Mesh:
             lpos, wpos, tpos: linspace of discrete x, y, z positions given by l, w, t and Nl, Nw, Nt
             globalNodes: set of all global node objects
             elements: set of all element objects
+            fiberElements: set of all fiber element objects (may be overlap with elements attribute)
             aspectRatio: volume aspect ratio (deviation away from perfect cube unit)
                     ** aspectRatio = volume of unit cell/ volume of unit cube, so aspectRatio = 1
                     corresponds to a high quality mesh, while aspectRatio >> 1 is a low quality mesh
@@ -204,6 +205,7 @@ class Mesh:
         self.name = name
         self.globalNodes = []
         self.elements = []
+        self.fiberElements = []
         self.skewness = self.meshQuality()
         # Linearly spaced unit coordinates are defined such that there
         # are N(l, w, t) - where N(l, w, t) corresponds to either Nl, 
@@ -238,7 +240,8 @@ class Mesh:
         print("T radius: ", self.Rt)
         for element in self.getElements():
             if self.isElementFiber(element):
-                print("this element is fiber: ", print(element))
+                print("this element ID is a fiber element #", element.id)
+                self.fiberElements.append(element)
 
     def isElementFiber(self, elem):
         ''' Determines if a given element in the mesh is fiberous
@@ -253,8 +256,6 @@ class Mesh:
             y_c = (i + 0.5) * self.spac + (2*i + 1) * self.Rw
             z_c = self.t/2
             center = [x_c, y_c, z_c]
-            print("coord: ", coord)
-            print("center: ", center)
             if self.isPointinEllipse(coord, center):
                 return True
         return False
@@ -291,6 +292,10 @@ class Mesh:
         ax.set_aspect('auto')
         # Plotting
         filled = np.ones((self.Nl - 1, self.Nw - 1, self.Nt - 1))
+        for element in self.getFiberElements():
+            linID = element.id
+            arrID = np.unravel_index(linID, filled.shape, 'F')
+            filled[arrID[0], arrID[1], arrID[2]] = 0
         x, y, z = np.indices(np.array(filled.shape) + 1)
         ax.voxels(x * self.l/(self.Nl - 1), 
                     y * self.w/(self.Nw - 1), 
@@ -502,6 +507,14 @@ class Mesh:
             print("Elements have not been generated yet!")
             return None
         return self.elements
+
+    def getFiberElements(self):
+        ''' Returns the elements defined within the current context of the mesh.
+        '''
+        if len(self.fiberElements) == 0:
+            print("Elements have not been generated yet!")
+            return None
+        return self.fiberElements
 
     def getNumberofNodes(self):
         ''' Returns the number of nodes defined within the current context of the mesh.
