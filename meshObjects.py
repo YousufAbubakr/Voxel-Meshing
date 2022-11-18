@@ -235,7 +235,7 @@ class Mesh:
         ''' Determines if elements in mesh are fiberous
         '''
         for element in self.getElements():
-            if self.isElmentFiber(element):
+            if self.isElementFiber(element):
                 print("this element is fiber: ", print(element))
 
     def isElementFiber(self, elem):
@@ -272,7 +272,7 @@ class Mesh:
         y_c = center[1]
         z_c = center[2]
         # Relevant formula for ellipses:
-        region = (y - y_c)^2/(self.Rw^2) + (z - z_c)^2/(self.Rt^2)
+        region = (y - y_c)**2/(self.Rw**2) + (z - z_c)**2/(self.Rt**2)
         if region <= 1:
             return True
         else:
