@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from math import isclose
+from math import floor, isclose
 from alive_progress import alive_bar
 import time
 
@@ -139,7 +139,7 @@ class Mesh:
     |7 _ _ 8|_ _ _ _|9       Mesh = Elements
     '''
 
-    def __init__(self, l, w, t, name, *args):
+    def __init__(self, l, w, t, name, *args, diam = 0.12, spac = 0.20, ang = 30):
         ''' Initializing instance of a mesh given a set of geometry and 
         meshing parameters. 
         
@@ -152,6 +152,7 @@ class Mesh:
             l, w, t: length, width, and thickness of mesh, 
                      where (li, wi, ti) corresponds to an (x, y, z) coordinate system
             name: name of mesh in string format
+            diam, spac, ang: fiber diameter, spacing, and angle
             *args: R - unit element edge length OR Nl, Nw, Nt - number of elements along
                      the length, width, and thickness directions
                      ** Note that the R parameter works best when your specimen geometry is cubic
@@ -159,6 +160,7 @@ class Mesh:
 
         Attributes (static variables):
             l, w, t: length, width, and thickness of mesh
+            diam, spac, ang: fiber diameter, spacing, and angle
             R: unit element edge length (if creating uniform mesh, otherwise R = None)
             name: name of mesh in string format
             Nl, Nw, Nt: number of elements along the length, width, and thickness directions
@@ -189,9 +191,16 @@ class Mesh:
             self.Nw = args[1]
             self.Nt = args[2]
         assert self.Nl > 1 and self.Nw > 1 and self.Nt > 1, "Number of elements must be greater than 0!"
+        assert ang < 90 and ang >= 0, "Fiber angle must be < 90 degrees and >= 0 degrees!"
         self.l = l
         self.w = w
         self.t = t
+        self.diam = diam
+        self.Rw = (diam/2)/np.cos(ang * np.pi / 180)
+        self.Rt = (diam/2)
+        assert 2 * self.Rw <= self.w or 2 * self.Rt <= self.t, "Fiber radii must be less than dimensions of sample specimen!"
+        self.spac = spac
+        self.ang = ang
         self.name = name
         self.globalNodes = []
         self.elements = []
@@ -221,6 +230,53 @@ class Mesh:
         '''
         for element in self.getElements():
             print(element)
+
+    def findFibers(self):
+        ''' Determines if elements in mesh are fiberous
+        '''
+        for element in self.getElements():
+            if self.isElmentFiber(element):
+                print("this element is fiber: ", print(element))
+
+    def isElementFiber(self, elem):
+        ''' Determines if a given element in the mesh is fiberous
+        '''
+        coord = elem.centroid
+        # Computing the number of fibers in the mesh:
+        w_f = 2 * self.Rw + self.spac # The total space that each fibe unit needs along the w-t plane
+        n_f = floor(self.w/w_f)
+        for i in range(n_f):
+            # Defining coordinates of fiber-ellipse centers along w-t plane:
+            x_c = 0 # Position along length of specimen doesn't matter as of now
+            y_c = (i + 0.5) * self.spac + (2*i + 1) * self.Rw
+            z_c = self.t/2
+            center = [x_c, y_c, z_c]
+            if self.isPointinEllipse(coord, center):
+                return True
+            else:
+                return False
+
+    def isPointinEllipse(self, coord, center):
+        ''' Determines if a given point coordinates are enslosed 
+            inside an ellipsed centered at another set of points
+
+            Inputs:
+                coord - [x, y, z] coordinate of point in interest
+                center - [x_c, y_c, z_c] coordinate of center of ellipse
+                ** Note that for an ellipse in this model, only the 
+                [w, t] ~ [y, z] directions are relevant to determining
+                this relationship because the ellipse is 2D **
+        '''
+        y = coord[1]
+        z = coord[2]
+        y_c = center[1]
+        z_c = center[2]
+        # Relevant formula for ellipses:
+        region = (y - y_c)^2/(self.Rw^2) + (z - z_c)^2/(self.Rt^2)
+        if region <= 1:
+            return True
+        else:
+            return False
 
     def plot3D(self):
         ''' Plots array of nodes in the form of a voxel mesh with matplotlib library functions
