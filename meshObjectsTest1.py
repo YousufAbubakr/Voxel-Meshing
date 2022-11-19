@@ -9,7 +9,7 @@ class TestStringMethods(unittest.TestCase):
         length = 11
         width = 6
         thickness = 0.2
-        Nl = 6
+        Nl = 3
         Nw = 20
         Nt = 20
         name = "Find_Fibers"

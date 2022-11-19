@@ -139,7 +139,7 @@ class Mesh:
     |7 _ _ 8|_ _ _ _|9       Mesh = Elements
     '''
 
-    def __init__(self, l, w, t, name, *args, diam = 0.12, spac = 0.20, ang = 30):
+    def __init__(self, l, w, t, name, *args, diam = 0.12, spac = 0.22, ang = 30):
         ''' Initializing instance of a mesh given a set of geometry and 
         meshing parameters. 
         
