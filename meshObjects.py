@@ -115,6 +115,11 @@ class Element:
         Zcen = np.mean(Z)
         return [Xcen, Ycen, Zcen]
 
+    def getNodes(self):
+        ''' Gets nodes from element object
+        '''
+        return self.nodes
+
     def __str__(self):
         ''' Print method for Element object
         '''
@@ -363,7 +368,7 @@ class Mesh:
                 time.sleep(0.0005)
                 bar()
 
-    def writeMesh(self):
+    def writeMesh(self, writeFibers):
         ''' Writes .msh file in current working directory.
         '''
         # File Keywords:
@@ -379,23 +384,54 @@ class Mesh:
         numTags = "0 0 0"
         elementsEnd = "$EndElements\n"
         # Writing to file
-        with alive_bar(len(self.getNodes()) + len(self.getElements()), theme='smooth', title=f'Writing Mesh File(.msh)...') as bar:
-            with open(self.name + ".msh", "w") as file:
-                # Writing data to a file
-                file.writelines([format, formatNum, formatEnd, nodes, numNodes])
-                for node in self.getNodes():
-                    file.write(str(node.id) + " " + str(node.x) + " " + str(node.y) + " " + str(node.z) + "\n")
-                    time.sleep(0.0005)
-                    bar()
-                file.writelines([nodesEnd, elements, numElements])
-                for element in self.getElements():
-                    IDs = ""
-                    for node in element.nodes:
-                        IDs += " " + str(node.id)
-                    file.write(str(element.id) + elementType + numTags + IDs + "\n")
-                    time.sleep(0.0005)
-                    bar()
-                file.write(elementsEnd)
+        if writeFibers:
+            fiberNodes = []
+            idDict = {}
+            i = 1
+            for fiberElem in self.getFiberElements():
+                for fiberNode in fiberElem.getNodes():
+                    if fiberNode not in fiberNodes:
+                        fiberNodes.append(fiberNode)
+                        # idDictionary maps the fiber node id's to a an ordered sequence of id's starting at 1
+                        idDict[fiberNode.id] = i
+                        i += 1
+            numNodes = str(len(fiberNodes)) + "\n"
+            numElements = str(len(self.getFiberElements())) + "\n"
+            with alive_bar(len(fiberNodes) + len(self.getFiberElements()), theme='smooth', title=f'Writing Full Mesh File(.msh)...') as bar:
+                with open(self.name + ".msh", "w") as file:
+                    # Writing data to a file
+                    file.writelines([format, formatNum, formatEnd, nodes, numNodes])
+                    for node in fiberNodes:
+                        file.write(str(idDict[node.id]) + " " + str(node.x) + " " + str(node.y) + " " + str(node.z) + "\n")
+                        time.sleep(0.0005)
+                        bar()
+                    file.writelines([nodesEnd, elements, numElements])
+                    for element in self.getFiberElements():
+                        IDs = ""
+                        for node in element.nodes:
+                            IDs += " " + str(idDict[node.id])
+                        file.write(str(element.id) + elementType + numTags + IDs + "\n")
+                        time.sleep(0.0005)
+                        bar()
+                    file.write(elementsEnd)
+        else:
+            with alive_bar(len(self.getNodes()) + len(self.getElements()), theme='smooth', title=f'Writing Full Mesh File(.msh)...') as bar:
+                with open(self.name + ".msh", "w") as file:
+                    # Writing data to a file
+                    file.writelines([format, formatNum, formatEnd, nodes, numNodes])
+                    for node in self.getNodes():
+                        file.write(str(node.id) + " " + str(node.x) + " " + str(node.y) + " " + str(node.z) + "\n")
+                        time.sleep(0.0005)
+                        bar()
+                    file.writelines([nodesEnd, elements, numElements])
+                    for element in self.getElements():
+                        IDs = ""
+                        for node in element.nodes:
+                            IDs += " " + str(node.id)
+                        file.write(str(element.id) + elementType + numTags + IDs + "\n")
+                        time.sleep(0.0005)
+                        bar()
+                    file.write(elementsEnd)
 
     def meshQuality(self):
         ''' Subroutine that determines mesh quality.
@@ -510,12 +546,21 @@ class Mesh:
         return self.elements
 
     def getFiberElements(self):
-        ''' Returns the elements defined within the current context of the mesh.
+        ''' Returns the fiber elements defined within the current context of the mesh.
         '''
         if len(self.fiberElements) == 0:
             print("Fiber elements have not been generated yet!")
             return None
         return self.fiberElements
+
+    def getMatrixElements(self):
+        ''' Returns the matrix elements defined within the current context of the mesh.
+        '''
+        if len(self.fiberElements) == 0:
+            print("Fiber elements have not been generated yet!")
+            return None
+        s = set(self.getFiberElements())
+        return [x for x in self.getElements() if x not in s]
 
     def getNumberofNodes(self):
         ''' Returns the number of nodes defined within the current context of the mesh.

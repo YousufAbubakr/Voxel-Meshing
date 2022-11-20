@@ -9,14 +9,16 @@ class TestStringMethods(unittest.TestCase):
         length = 11
         width = 6
         thickness = 0.2
-        Nl = 3
-        Nw = 20
-        Nt = 20
+        Nl = 2
+        Nw = 41
+        Nt = 41
         name = "Find_Fibers"
         testMesh = Mesh(length, width, thickness, name, Nl, Nw, Nt)
         testMesh.generateMesh()
         testMesh.findFibers()
         testMesh.plot3D()
+        writeFibers = True
+        testMesh.writeMesh(writeFibers)
 
 if __name__ == '__main__':
     unittest.main()
