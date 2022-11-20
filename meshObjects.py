@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from math import floor, isclose
+from math import ceil, floor, isclose
 from alive_progress import alive_bar
 import time
 
@@ -295,7 +295,7 @@ class Mesh:
         if self.getFiberElements() != None:
             for element in self.getFiberElements():
                 linID = element.id - 1 # Must offset by one because the indexing of elements starts at 1, but array indexing starts at 0
-                arrID = np.unravel_index(linID, filled.shape, 'F')
+                arrID = np.unravel_index(linID, filled.shape)
                 filled[arrID[0], arrID[1], arrID[2]] = 0
         x, y, z = np.indices(np.array(filled.shape) + 1)
         ax.voxels(x * self.l/(self.Nl - 1), 
