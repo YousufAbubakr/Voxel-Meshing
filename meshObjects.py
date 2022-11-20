@@ -292,10 +292,11 @@ class Mesh:
         ax.set_aspect('auto')
         # Plotting
         filled = np.ones((self.Nl - 1, self.Nw - 1, self.Nt - 1))
-        for element in self.getFiberElements():
-            linID = element.id
-            arrID = np.unravel_index(linID, filled.shape, 'F')
-            filled[arrID[0], arrID[1], arrID[2]] = 0
+        if self.getFiberElements() != None:
+            for element in self.getFiberElements():
+                linID = element.id - 1 # Must offset by one because the indexing of elements starts at 1, but array indexing starts at 0
+                arrID = np.unravel_index(linID, filled.shape, 'F')
+                filled[arrID[0], arrID[1], arrID[2]] = 0
         x, y, z = np.indices(np.array(filled.shape) + 1)
         ax.voxels(x * self.l/(self.Nl - 1), 
                     y * self.w/(self.Nw - 1), 
@@ -512,7 +513,7 @@ class Mesh:
         ''' Returns the elements defined within the current context of the mesh.
         '''
         if len(self.fiberElements) == 0:
-            print("Elements have not been generated yet!")
+            print("Fiber elements have not been generated yet!")
             return None
         return self.fiberElements
 
