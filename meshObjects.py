@@ -245,7 +245,6 @@ class Mesh:
         print("T radius: ", self.Rt)
         for element in self.getElements():
             if self.isElementFiber(element):
-                print("this element ID is a fiber element #", element.id)
                 self.fiberElements.append(element)
 
     def isElementFiber(self, elem):

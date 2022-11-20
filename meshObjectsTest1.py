@@ -6,17 +6,17 @@ class TestStringMethods(unittest.TestCase):
     def testFiberFinding(self):
         ''' Tests findFibers() method.
         '''
-        length = 10
-        width = 10
+        length = 11
+        width = 6
         thickness = 0.2
         Nl = 2
-        Nw = 20
-        Nt = 20
+        Nw = 360
+        Nt = 360
         name = "Find_Fibers"
-        testMesh = Mesh(length, width, thickness, name, Nl, Nw, Nt)
+        testMesh = Mesh(length, width, thickness, name, Nl, Nw, Nt, ang = 0)
         testMesh.generateMesh()
         testMesh.findFibers()
-        testMesh.plot3D()
+        #testMesh.plot3D()
         writeFibers = True
         writeMatrix = True
         testMesh.writeMesh(writeFibers, writeMatrix)
