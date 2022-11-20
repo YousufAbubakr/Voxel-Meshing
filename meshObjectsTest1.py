@@ -18,7 +18,8 @@ class TestStringMethods(unittest.TestCase):
         testMesh.findFibers()
         testMesh.plot3D()
         writeFibers = True
-        testMesh.writeMesh(writeFibers)
+        writeMatrix = True
+        testMesh.writeMesh(writeFibers, writeMatrix)
 
 if __name__ == '__main__':
     unittest.main()
