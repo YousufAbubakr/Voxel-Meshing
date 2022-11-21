@@ -10,8 +10,8 @@ class TestStringMethods(unittest.TestCase):
         width = 6
         thickness = 0.2
         Nl = 2
-        Nw = 360
-        Nt = 360
+        Nw = 401
+        Nt = 41
         name = "Find_Fibers"
         testMesh = Mesh(length, width, thickness, name, Nl, Nw, Nt, ang = 0)
         testMesh.generateMesh()
