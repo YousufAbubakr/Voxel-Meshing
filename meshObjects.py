@@ -170,9 +170,9 @@ class Mesh:
             name: name of mesh in string format
             Nl, Nw, Nt: number of elements along the length, width, and thickness directions
             lpos, wpos, tpos: linspace of discrete x, y, z positions given by l, w, t and Nl, Nw, Nt
-            globalNodes: set of all global node objects
-            elements: set of all element objects
-            fiberElements: set of all fiber element objects (may be overlap with elements attribute)
+            globalNodes: hash set of all global node objects
+            elements: hash set of all element objects
+            fiberElements: hash set of all fiber element objects (may be overlap with elements attribute)
             aspectRatio: volume aspect ratio (deviation away from perfect cube unit)
                     ** aspectRatio = volume of unit cell/ volume of unit cube, so aspectRatio = 1
                     corresponds to a high quality mesh, while aspectRatio >> 1 is a low quality mesh
@@ -208,9 +208,9 @@ class Mesh:
         self.spac = spac
         self.ang = ang
         self.name = name
-        self.globalNodes = []
-        self.elements = []
-        self.fiberElements = []
+        self.globalNodes = {}
+        self.elements = {}
+        self.fiberElements = {}
         self.skewness = self.meshQuality()
         # Linearly spaced unit coordinates are defined such that there
         # are N(l, w, t) - where N(l, w, t) corresponds to either Nl, 
@@ -245,7 +245,7 @@ class Mesh:
         print("T radius: ", self.Rt)
         for element in self.getElements():
             if self.isElementFiber(element):
-                self.fiberElements.append(element)
+                self.fiberElements.add(element)
 
     def isElementFiber(self, elem):
         ''' Determines if a given element in the mesh is fiberous
@@ -325,7 +325,7 @@ class Mesh:
                         # Creating a node object with the (l, w, t) coordinates
                         node = Node(l, w, t)
                         # Appending newly constructed node to global node list in mesh object:
-                        self.globalNodes.append(node)
+                        self.globalNodes.add(node)
                         cornerNodes.append(node)
                         time.sleep(0.0005)
                         bar()
@@ -360,10 +360,10 @@ class Mesh:
                 elementNodes = [cornerNode]
                 for node in newNodes:
                     if not self.nodeInMesh(node):
-                        self.globalNodes.append(node)
+                        self.globalNodes.add(node)
                     elementNodes.append(node)     
                 element = Element(elementNodes)
-                self.elements.append(element)
+                self.elements.add(element)
                 time.sleep(0.0005)
                 bar()
 
@@ -553,8 +553,7 @@ class Mesh:
         if len(self.fiberElements) == 0:
             print("Fiber elements have not been generated yet!")
             return None
-        s = set(self.getFiberElements())
-        return [x for x in self.getElements() if x not in s]
+        return self.getElements() - self.getFiberElements()
 
     def getNumberofNodes(self):
         ''' Returns the number of nodes defined within the current context of the mesh.
