@@ -76,7 +76,6 @@ class TestStringMethods(unittest.TestCase):
         assert Nl == 4 and Nw == 6 and Nt == 8, "Want 105 elements for this test!"
         nonuniform = Mesh(length, width, thickness, name, Nl, Nw, Nt)
         nonuniform.generateMesh()
-        nonuniform.writeMesh()
         print(nonuniform)
         nonuniform.printNodes()
         nonuniform.printElements()

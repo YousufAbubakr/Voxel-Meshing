@@ -54,6 +54,11 @@ class Node:
         '''
         return all([self.x == other.x, self.y == other.y, self.z == other.z])
 
+    def __hash__(self):
+        ''' Hash method that returns ID of node
+        '''
+        return self.id
+
     def __str__(self):
         ''' Print method for Node object
         '''
@@ -119,6 +124,17 @@ class Element:
         ''' Gets nodes from element object
         '''
         return self.nodes
+
+    def __eq__(self, other):
+        ''' Equality method that determines whether two elements are equivalent
+            based on their centroids
+        '''
+        return self.centroid == other.centroid
+
+    def __hash__(self):
+        ''' Hash method that returns ID of element
+        '''
+        return self.id
 
     def __str__(self):
         ''' Print method for Element object
@@ -208,9 +224,9 @@ class Mesh:
         self.spac = spac
         self.ang = ang
         self.name = name
-        self.globalNodes = {}
-        self.elements = {}
-        self.fiberElements = {}
+        self.globalNodes = set()
+        self.elements = set()
+        self.fiberElements = set()
         self.skewness = self.meshQuality()
         # Linearly spaced unit coordinates are defined such that there
         # are N(l, w, t) - where N(l, w, t) corresponds to either Nl, 
