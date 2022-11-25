@@ -55,9 +55,9 @@ class Node:
         return all([self.x == other.x, self.y == other.y, self.z == other.z])
 
     def __hash__(self):
-        ''' Hash method that returns ID of node
+        ''' Hash method that returns coordinate of node
         '''
-        return self.id
+        return hash(self.coord)
 
     def __str__(self):
         ''' Print method for Node object
@@ -101,20 +101,21 @@ class Element:
         '''
         # Instance Variables:
         self.nodes = nodes
-        self.centroid = self.getCentroid()
+        self.centroid = Element.getCentroid([node.coord for node in self.nodes])
         self.id = Element.lastID
         Element.lastID += 1
 
-    def getCentroid(self):
+    @staticmethod
+    def getCentroid(coordList):
         ''' Determines (x, y, z) coordinate location of element centroid
         '''
         X = []
         Y = []
         Z = []
-        for node in self.nodes:
-            X.append(node.x)
-            Y.append(node.y)
-            Z.append(node.z)
+        for coord in coordList:
+            X.append(coord[0])
+            Y.append(coord[1])
+            Z.append(coord[2])
         Xcen = np.mean(X)
         Ycen = np.mean(Y)
         Zcen = np.mean(Z)
@@ -132,9 +133,9 @@ class Element:
         return self.centroid == other.centroid
 
     def __hash__(self):
-        ''' Hash method that returns ID of element
+        ''' Hash method that returns centroid of element
         '''
-        return self.id
+        return hash(str(self.centroid))
 
     def __str__(self):
         ''' Print method for Element object

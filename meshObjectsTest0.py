@@ -81,7 +81,7 @@ class TestStringMethods(unittest.TestCase):
         nonuniform.printElements()
         nonuniform.plot3D()
         self.assertEqual(Nl * Nw * Nt, nonuniform.getNumberofNodes())
-        self.assertEqual((Nl - 1) * (Nw - 1)* (Nt - 1), nonuniform.getNumberofElements())
+        self.assertEqual((Nl - 1) * (Nw - 1) * (Nt - 1), nonuniform.getNumberofElements())
 
     def testUnitElementGeneration(self):
         ''' Tests unit element generation by using self.R parameter instead of
